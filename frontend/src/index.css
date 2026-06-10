@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #e8e8ea;
+  --color-surface: #ffffff;
+  --color-muted: #f6f6f7;
+  --color-line: #efeff1;
+  --color-ink: #1b1b1f;
+  --color-subtle: #9a9da4;
+  --color-faint: #c4c6cc;
+
+  --color-brand: #f5b53c;
+  --color-orange: #f15a29;
+  --color-success: #1fa463;
+  --color-info: #3b82f6;
+  --color-violet: #8b5cf6;
+  --color-danger: #ef4444;
+
+  --color-tint-violet: #efeafd;
+  --color-tint-peach: #fdeee7;
+  --color-tint-amber: #fdf6dd;
+  --color-tint-mint: #e7f7ee;
+  --color-tint-sky: #e9f1fe;
+  --color-tint-rose: #fde9e9;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+
+  --shadow-card: 0 1px 2px rgba(17, 17, 26, 0.04),
+    0 8px 24px rgba(17, 17, 26, 0.05);
+  --shadow-float: 0 12px 40px rgba(17, 17, 26, 0.12);
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+
+@layer utilities {
+  .animate-pop {
+    animation: pop-in 0.16s ease-out;
+  }
+  .animate-fade {
+    animation: fade-in 0.18s ease-out;
+  }
+  .animate-slide-in {
+    animation: slide-in-right 0.24s ease-out;
+  }
+  .animate-slide-out {
+    animation: slide-out-right 0.24s ease-in forwards;
+  }
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-faint);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}

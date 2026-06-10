@@ -1,0 +1,121 @@
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  CheckCircle2,
+  ChevronDown,
+  Circle,
+  FileText,
+  PlayCircle,
+  Video,
+} from "lucide-react";
+import { Badge, CircularProgress, IconButton } from "@/ui";
+import { X } from "lucide-react";
+import { cn } from "@/lib/cn";
+import { knowledgeModules } from "@/data/assistant";
+import type { KnowledgeItem, KnowledgeModule } from "@/types";
+
+const statusIcon = {
+  done: { Icon: CheckCircle2, className: "text-success" },
+  active: { Icon: PlayCircle, className: "text-ink" },
+  todo: { Icon: Circle, className: "text-faint" },
+};
+
+function Item({ item }: { item: KnowledgeItem }) {
+  const { t } = useTranslation();
+  const { Icon, className } = statusIcon[item.status];
+  const KindIcon = item.kind === "video" ? Video : FileText;
+
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-3 rounded-xl px-2 py-2",
+        item.status === "active" && "bg-muted",
+      )}
+    >
+      <Icon size={18} className={className} />
+      <div className="min-w-0">
+        <p
+          className={cn(
+            "truncate text-sm",
+            item.status === "todo" ? "text-subtle" : "text-ink",
+          )}
+        >
+          {t(item.titleKey)}
+        </p>
+        <p className="mt-0.5 flex items-center gap-1 text-xs text-subtle">
+          <KindIcon size={12} />
+          {item.duration}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function Module({ module }: { module: KnowledgeModule }) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(module.index === 1);
+  const done = module.items.filter((item) => item.status === "done").length;
+
+  return (
+    <div className="rounded-2xl border border-line">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className="flex w-full items-center gap-2 px-3 py-2.5 text-left"
+      >
+        <span className="truncate text-sm font-medium">{t(module.titleKey)}</span>
+        <Badge>{t("knowledge.module", { n: module.index })}</Badge>
+        <span className="ml-auto text-xs text-subtle">
+          {done} / {module.items.length}
+        </span>
+        <ChevronDown
+          size={16}
+          className={cn("text-faint transition-transform", open && "rotate-180")}
+        />
+      </button>
+      {open && (
+        <div className="space-y-0.5 px-2 pb-2">
+          {module.items.map((item) => (
+            <Item key={item.id} item={item} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function KnowledgeList({ onClose }: { onClose?: (() => void) | undefined }) {
+  const { t } = useTranslation();
+  const all = knowledgeModules.flatMap((module) => module.items);
+  const done = all.filter((item) => item.status === "done").length;
+  const percent = Math.round((done / all.length) * 100);
+
+  return (
+    <section className="flex min-h-0 flex-col gap-3">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold">{t("knowledge.title")}</h2>
+        <div className="flex items-center gap-2">
+          <span className="flex items-center gap-1.5 text-xs font-medium text-subtle">
+            {percent}%
+            <CircularProgress value={percent} />
+          </span>
+          {onClose && (
+            <IconButton
+              variant="outline"
+              className="size-8"
+              aria-label={t("assistant.close")}
+              onClick={onClose}
+            >
+              <X size={16} />
+            </IconButton>
+          )}
+        </div>
+      </div>
+      <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
+        {knowledgeModules.map((module) => (
+          <Module key={module.id} module={module} />
+        ))}
+      </div>
+    </section>
+  );
+}

@@ -1,0 +1,13 @@
+[project]
+name = "mol-auth"
+version = "0.1.0"
+description = "Authentication service for the MOL assistant (stub)"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
