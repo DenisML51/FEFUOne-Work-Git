@@ -2,7 +2,6 @@ interface YandexLogoProps {
   className?: string;
 }
 
-/** Yandex logo (red rounded square with white "Я"). */
 export function YandexLogo({ className }: YandexLogoProps) {
   return (
     <svg

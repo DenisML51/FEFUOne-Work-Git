@@ -11,7 +11,6 @@ interface AvatarProps {
 export function Avatar({ initials, src, alt, className }: AvatarProps) {
   const [failed, setFailed] = useState(false);
 
-  // Reset the error state if the source changes (e.g. after re-login).
   useEffect(() => setFailed(false), [src]);
 
   const showImage = src && !failed;

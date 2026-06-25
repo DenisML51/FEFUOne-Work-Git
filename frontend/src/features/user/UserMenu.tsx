@@ -12,7 +12,7 @@ const items: { id: string; labelKey: string; icon: LucideIcon }[] = [
 
 export function UserMenu() {
   const { t } = useTranslation();
-  const { user, logout } = useAuth();
+  const { user, logout, setRole } = useAuth();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -32,6 +32,7 @@ export function UserMenu() {
   const initials = initialsOf(fullName);
   const photo = user?.photo_link ?? undefined;
   const isYandex = Boolean(user?.yandex_id);
+  const roles = user?.roles ?? [];
 
   return (
     <div ref={ref} className="relative">
@@ -68,6 +69,23 @@ export function UserMenu() {
               </span>
               {t("user.viaYandex")}
             </span>
+          )}
+          {roles.length > 1 && (
+            <div className="px-2 pt-2">
+              <label className="text-xs text-subtle">{t("user.activeRole")}</label>
+              <select
+                value={user?.current_role?.config_id}
+                onChange={(event) => void setRole(Number(event.target.value))}
+                className="mt-1 w-full rounded-lg border border-line bg-muted px-2 py-1.5 text-sm outline-none focus:border-ink/30 focus:bg-surface"
+              >
+                {roles.map((config) => (
+                  <option key={config.config_id} value={config.config_id}>
+                    {config.role.title}
+                    {config.subdivision ? ` — ${config.subdivision.title}` : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
           )}
           <div className="my-1 h-px bg-line" />
           {items.map(({ id, labelKey, icon: Icon }) => (

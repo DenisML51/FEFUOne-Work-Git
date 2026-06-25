@@ -149,6 +149,7 @@ export const en: typeof ru = {
     settings: "Settings",
     logout: "Sign out",
     viaYandex: "Signed in with Yandex",
+    activeRole: "Active role",
   },
   auth: {
     title: "Sign in",

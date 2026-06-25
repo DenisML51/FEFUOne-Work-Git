@@ -1,4 +1,3 @@
-/** Russian full names are "Фамилия Имя Отчество" — the given name is the 2nd token. */
 export function firstNameOf(fullName: string): string {
   const parts = fullName.trim().split(/\s+/);
   return parts[1] ?? parts[0] ?? "";

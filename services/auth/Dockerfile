@@ -12,10 +12,6 @@ COPY pyproject.toml ./
 RUN uv pip install --system --no-cache -r pyproject.toml
 
 COPY app ./app
-COPY alembic.ini ./alembic.ini
-COPY migrations ./migrations
-COPY entrypoint.sh ./entrypoint.sh
-RUN chmod +x ./entrypoint.sh
 
 RUN useradd --create-home appuser
 USER appuser
@@ -25,4 +21,4 @@ EXPOSE 8000
 HEALTHCHECK --interval=15s --timeout=3s --retries=5 \
     CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
 
-CMD ["./entrypoint.sh"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

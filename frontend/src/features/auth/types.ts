@@ -18,11 +18,12 @@ export interface RoleConfig {
 
 export interface AuthUser {
   id: number;
-  email: string;
+  email: string | null;
   full_name: string;
   photo_link?: string | null;
   yandex_id?: string | null;
   phone?: string | null;
+  is_admin: boolean;
   roles: RoleConfig[];
   current_role?: RoleConfig | null;
 }

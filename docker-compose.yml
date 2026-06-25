@@ -34,37 +34,25 @@ services:
     volumes:
       - qdrant-data:/qdrant/storage
 
-  auth-db:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    networks: [mol]
-    environment:
-      POSTGRES_USER: ${AUTH_DB_USER:-auth}
-      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD:-auth}
-      POSTGRES_DB: ${AUTH_DB_NAME:-auth}
-    volumes:
-      - auth-db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${AUTH_DB_USER:-auth}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   auth:
     <<: *app-build
     build: ./services/auth
     environment:
-      DATABASE_URL: ${AUTH_DATABASE_URL:-postgresql+asyncpg://auth:auth@auth-db:5432/auth}
+      DB_HOST: ${AUTH_DB_HOST:-host.docker.internal}
+      DB_PORT: ${AUTH_DB_PORT:-3306}
+      DB_USER: ${AUTH_DB_USER:-root}
+      DB_PASSWORD: ${AUTH_DB_PASSWORD:-}
+      DB_DATABASE: ${AUTH_DB_DATABASE:-fefuone}
       JWT_SECRET: ${JWT_SECRET:-mol-dev-secret-change-me}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
       COOKIE_SAMESITE: ${COOKIE_SAMESITE:-lax}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8081}
+      SUPERUSER_EMAILS: ${SUPERUSER_EMAILS:-["rusinov.ds@dvfu.ru"]}
       YANDEX_CLIENT_ID: ${YANDEX_CLIENT_ID:-}
       YANDEX_SECRET_ID: ${YANDEX_SECRET_ID:-}
       YANDEX_REDIRECT_DOMAIN: ${YANDEX_REDIRECT_DOMAIN:-http://localhost:8081/api/auth}
-    depends_on:
-      auth-db:
-        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   ai-agent:
     <<: *app-build
@@ -173,7 +161,6 @@ services:
 volumes:
   qdrant-data:
   pg-data:
-  auth-db-data:
   airflow-logs:
 
 networks:

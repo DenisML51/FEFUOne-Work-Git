@@ -11,7 +11,6 @@ export function YandexLoginButton({ className }: { className?: string }) {
   function handleClick() {
     if (leaving) return;
     setLeaving(true);
-    // Let the morph animation play before the full-page redirect to Yandex.
     window.setTimeout(loginWithYandex, 650);
   }
 

@@ -1,13 +1,16 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchCurrentUser, logout as logoutRequest } from "./api";
+import { fetchCurrentUser, logout as logoutRequest, setActiveRole } from "./api";
 import type { AuthUser } from "./types";
 
 interface AuthContextValue {
   user: AuthUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isAdmin: boolean;
+  hasPermission: (entity: string, action: string) => boolean;
   refresh: () => Promise<unknown>;
+  setRole: (configId: number) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -25,16 +28,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     staleTime: 5 * 60_000,
   });
 
+  const user = query.data ?? null;
+  const permissions = user?.current_role?.role.permissions ?? {};
+  const refresh = () => queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
+
   const value: AuthContextValue = {
-    user: query.data ?? null,
+    user,
     isLoading: query.isLoading,
-    isAuthenticated: !query.isError && query.data != null,
-    refresh: () =>
-      queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY }),
+    isAuthenticated: !query.isError && user != null,
+    isAdmin: user?.is_admin ?? false,
+    hasPermission: (entity, action) => (permissions[entity] ?? []).includes(action),
+    refresh,
+    setRole: async (configId) => {
+      await setActiveRole(configId);
+      await refresh();
+    },
     logout: async () => {
       await logoutRequest().catch(() => undefined);
       queryClient.setQueryData(AUTH_QUERY_KEY, null);
-      await queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
+      await refresh();
     },
   };
 

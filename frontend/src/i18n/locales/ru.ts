@@ -148,6 +148,7 @@ export const ru = {
     settings: "Настройки",
     logout: "Выйти",
     viaYandex: "Вход через Яндекс",
+    activeRole: "Активная роль",
   },
   auth: {
     title: "Войти",
