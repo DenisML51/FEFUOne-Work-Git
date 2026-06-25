@@ -2,23 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LogOut, Settings, User, type LucideIcon } from "lucide-react";
 import { Avatar } from "@/ui";
-import { userName } from "@/data/workspace";
-
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  const value =
-    parts.length > 1 ? parts[0][0] + parts[1][0] : parts[0].slice(0, 1);
-  return value.toUpperCase();
-}
+import { useAuth } from "@/features/auth/AuthContext";
+import { initialsOf } from "@/features/auth/name";
 
 const items: { id: string; labelKey: string; icon: LucideIcon }[] = [
   { id: "profile", labelKey: "user.profile", icon: User },
   { id: "settings", labelKey: "user.settings", icon: Settings },
-  { id: "logout", labelKey: "user.logout", icon: LogOut },
 ];
 
 export function UserMenu() {
   const { t } = useTranslation();
+  const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -33,6 +27,12 @@ export function UserMenu() {
     return () => document.removeEventListener("mousedown", onClick);
   }, [open]);
 
+  const fullName = user?.full_name ?? "";
+  const roleTitle = user?.current_role?.role.title ?? t("user.role");
+  const initials = initialsOf(fullName);
+  const photo = user?.photo_link ?? undefined;
+  const isYandex = Boolean(user?.yandex_id);
+
   return (
     <div ref={ref} className="relative">
       <button
@@ -41,18 +41,34 @@ export function UserMenu() {
         onClick={() => setOpen((prev) => !prev)}
         className="rounded-full"
       >
-        <Avatar initials={initials(userName)} className="size-10 ring-2 ring-surface" />
+        <Avatar
+          initials={initials}
+          src={photo}
+          alt={fullName}
+          className="size-10 ring-2 ring-surface"
+        />
       </button>
 
       {open && (
-        <div className="animate-pop absolute bottom-0 left-full z-30 ml-2 w-52 origin-bottom-left rounded-2xl border border-line bg-surface p-2 shadow-float">
+        <div className="animate-pop absolute bottom-0 left-full z-30 ml-2 w-60 origin-bottom-left rounded-2xl border border-line bg-surface p-2 shadow-float">
           <div className="flex items-center gap-2 px-2 py-1.5">
-            <Avatar initials={initials(userName)} className="size-9" />
+            <Avatar initials={initials} src={photo} alt={fullName} className="size-9" />
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium">{userName}</p>
-              <p className="truncate text-xs text-subtle">{t("user.role")}</p>
+              <p className="truncate text-sm font-medium">{fullName}</p>
+              <p className="truncate text-xs text-subtle">{roleTitle}</p>
             </div>
           </div>
+          {user?.email && (
+            <p className="truncate px-2 text-xs text-subtle">{user.email}</p>
+          )}
+          {isYandex && (
+            <span className="mx-2 mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-tint-amber px-2 py-0.5 text-xs font-medium text-ink">
+              <span className="flex size-3.5 items-center justify-center rounded-full bg-[#fc3f1d] text-[9px] font-bold text-white">
+                Я
+              </span>
+              {t("user.viaYandex")}
+            </span>
+          )}
           <div className="my-1 h-px bg-line" />
           {items.map(({ id, labelKey, icon: Icon }) => (
             <button
@@ -65,6 +81,17 @@ export function UserMenu() {
               {t(labelKey)}
             </button>
           ))}
+          <button
+            type="button"
+            onClick={() => {
+              setOpen(false);
+              void logout();
+            }}
+            className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm text-ink hover:bg-muted"
+          >
+            <LogOut size={16} className="text-subtle" />
+            {t("user.logout")}
+          </button>
         </div>
       )}
     </div>

@@ -1,10 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { TopicTags } from "./TopicTags";
 import { Suggestions } from "./Suggestions";
-import { userName } from "@/data/workspace";
+import { useAuth } from "@/features/auth/AuthContext";
+import { firstNameOf } from "@/features/auth/name";
 
 export function AssistantHero({ onSelect }: { onSelect: (text: string) => void }) {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const userName = firstNameOf(user?.full_name ?? "");
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-5 px-2 text-center">

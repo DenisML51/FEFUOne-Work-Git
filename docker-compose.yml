@@ -4,6 +4,7 @@ x-app-build: &app-build
 
 x-airflow-common: &airflow-common
   image: ${AIRFLOW_IMAGE:-apache/airflow:3.0.6}
+  profiles: ["airflow"]
   environment: &airflow-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__CORE__AUTH_MANAGER: airflow.api_fastapi.auth.managers.simple.simple_auth_manager.SimpleAuthManager
@@ -33,9 +34,37 @@ services:
     volumes:
       - qdrant-data:/qdrant/storage
 
+  auth-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    networks: [mol]
+    environment:
+      POSTGRES_USER: ${AUTH_DB_USER:-auth}
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD:-auth}
+      POSTGRES_DB: ${AUTH_DB_NAME:-auth}
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${AUTH_DB_USER:-auth}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   auth:
     <<: *app-build
     build: ./services/auth
+    environment:
+      DATABASE_URL: ${AUTH_DATABASE_URL:-postgresql+asyncpg://auth:auth@auth-db:5432/auth}
+      JWT_SECRET: ${JWT_SECRET:-mol-dev-secret-change-me}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      COOKIE_SAMESITE: ${COOKIE_SAMESITE:-lax}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8081}
+      YANDEX_CLIENT_ID: ${YANDEX_CLIENT_ID:-}
+      YANDEX_SECRET_ID: ${YANDEX_SECRET_ID:-}
+      YANDEX_REDIRECT_DOMAIN: ${YANDEX_REDIRECT_DOMAIN:-http://localhost:8081/api/auth}
+    depends_on:
+      auth-db:
+        condition: service_healthy
 
   ai-agent:
     <<: *app-build
@@ -83,6 +112,7 @@ services:
 
   airflow-db:
     image: postgres:16-alpine
+    profiles: ["airflow"]
     restart: unless-stopped
     networks: [mol]
     environment:
@@ -143,6 +173,7 @@ services:
 volumes:
   qdrant-data:
   pg-data:
+  auth-db-data:
   airflow-logs:
 
 networks:

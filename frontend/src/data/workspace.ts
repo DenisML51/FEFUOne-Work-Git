@@ -1,7 +1,5 @@
 import type { AssistantTopic } from "@/types";
 
-export const userName = "Денис";
-
 export const assistantTopics: { id: AssistantTopic; labelKey: string }[] = [
   { id: "stock", labelKey: "assistant.topics.stock" },
   { id: "acts", labelKey: "assistant.topics.acts" },

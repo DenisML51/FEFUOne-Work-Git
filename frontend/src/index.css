@@ -73,7 +73,50 @@
   }
 }
 
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Yandex auth success: the logo blinks a couple of times to signal success. */
+@keyframes auth-blink {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.08);
+  }
+}
+
+/* Expanding ring behind the logo. */
+@keyframes auth-ring {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
 @layer utilities {
+  .animate-fade-out {
+    animation: fade-out 0.35s ease-in forwards;
+  }
+  .animate-auth-blink {
+    animation: auth-blink 0.7s ease-in-out 2;
+  }
+  .animate-auth-ring {
+    animation: auth-ring 1.2s ease-out infinite;
+  }
   .animate-pop {
     animation: pop-in 0.16s ease-out;
   }

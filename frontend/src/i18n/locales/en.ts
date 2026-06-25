@@ -148,5 +148,15 @@ export const en: typeof ru = {
     profile: "Profile",
     settings: "Settings",
     logout: "Sign out",
+    viaYandex: "Signed in with Yandex",
+  },
+  auth: {
+    title: "Sign in",
+    brand: "MOL AI Assistant",
+    subtitle: "Sign in with Yandex ID to continue",
+    yandexButton: "Sign in with Yandex ID",
+    footer: "Access with your DVFU corporate account",
+    success: "Signed in",
+    oauthError: "Could not sign in with Yandex. Please try again.",
   },
 };
