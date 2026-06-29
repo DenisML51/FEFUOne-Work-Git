@@ -152,7 +152,7 @@ export const ru = {
   },
   auth: {
     title: "Войти",
-    brand: "ИИ-ассистент МОЛ",
+    brand: "FEFUOne.AI",
     subtitle: "Войдите через Яндекс ID, чтобы продолжить",
     yandexButton: "Войти с Яндекс ID",
     footer: "Доступ по корпоративному аккаунту ДВФУ",

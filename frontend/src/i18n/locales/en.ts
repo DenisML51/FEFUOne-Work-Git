@@ -153,7 +153,7 @@ export const en: typeof ru = {
   },
   auth: {
     title: "Sign in",
-    brand: "MOL AI Assistant",
+    brand: "FEFUOne.AI",
     subtitle: "Sign in with Yandex ID to continue",
     yandexButton: "Sign in with Yandex ID",
     footer: "Access with your DVFU corporate account",
