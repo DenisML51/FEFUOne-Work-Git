@@ -23,7 +23,7 @@ export function LoginPage() {
       <div className="pointer-events-none absolute -top-24 left-1/2 size-[460px] -translate-x-1/2 rounded-full bg-brand/20 blur-3xl" />
 
       <div className="relative w-full max-w-sm rounded-3xl border border-line bg-surface p-8 text-center shadow-card sm:p-10">
-        <FefuOneLogo className="mx-auto h-8 w-auto text-brand" />
+        <FefuOneLogo className="mx-auto h-12 w-auto text-brand" />
 
         <p className="mt-5 text-sm font-medium text-ink">{t("auth.brand")}</p>
         <p className="mt-1 text-sm text-subtle">{t("auth.subtitle")}</p>
