@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
 import { apiFetch } from "@/lib/api";
 import { useSessions } from "@/features/sessions/SessionsContext";
 import type { ChatRequest, ChatResponse } from "@/types";
@@ -11,7 +10,6 @@ interface SendVariables {
 }
 
 export function useChat() {
-  const { t } = useTranslation();
   const { active, activeId, append, clear } = useSessions();
 
   const mutation = useMutation({
@@ -30,7 +28,7 @@ export function useChat() {
       append(sessionId, {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: t("assistant.error"),
+        content: "Не удалось получить ответ. Попробуйте ещё раз.",
       }),
   });
 

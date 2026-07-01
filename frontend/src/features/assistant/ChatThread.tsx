@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/cn";
 import type { ChatMessage } from "@/types";
 
@@ -9,7 +8,6 @@ interface ChatThreadProps {
 }
 
 export function ChatThread({ messages, pending }: ChatThreadProps) {
-  const { t } = useTranslation();
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,7 +39,7 @@ export function ChatThread({ messages, pending }: ChatThreadProps) {
       {pending && (
         <div className="flex justify-start">
           <div className="rounded-2xl bg-muted px-3.5 py-2.5 text-sm text-subtle">
-            {t("assistant.thinking")}
+            Печатает…
           </div>
         </div>
       )}

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
   CheckCircle2,
   ChevronDown,
@@ -20,8 +19,19 @@ const statusIcon = {
   todo: { Icon: Circle, className: "text-faint" },
 };
 
+const knowledgeLabels: Record<string, string> = {
+  "knowledge.m1.title": "Учёт и хранение ТМЦ",
+  "knowledge.m1.i1": "Приёмка и оприходование",
+  "knowledge.m1.i2": "Карточки складского учёта",
+  "knowledge.m1.i3": "Маркировка и места хранения",
+  "knowledge.m1.i4": "Пересортица: как избежать",
+  "knowledge.m2.title": "Инвентаризация и списание",
+  "knowledge.m2.i1": "План инвентаризации",
+  "knowledge.m2.i2": "Сверка остатков",
+  "knowledge.m2.i3": "Оформление акта списания",
+};
+
 function Item({ item }: { item: KnowledgeItem }) {
-  const { t } = useTranslation();
   const { Icon, className } = statusIcon[item.status];
   const KindIcon = item.kind === "video" ? Video : FileText;
 
@@ -40,7 +50,7 @@ function Item({ item }: { item: KnowledgeItem }) {
             item.status === "todo" ? "text-subtle" : "text-ink",
           )}
         >
-          {t(item.titleKey)}
+          {knowledgeLabels[item.titleKey]}
         </p>
         <p className="mt-0.5 flex items-center gap-1 text-xs text-subtle">
           <KindIcon size={12} />
@@ -52,7 +62,6 @@ function Item({ item }: { item: KnowledgeItem }) {
 }
 
 function Module({ module }: { module: KnowledgeModule }) {
-  const { t } = useTranslation();
   const [open, setOpen] = useState(module.index === 1);
   const done = module.items.filter((item) => item.status === "done").length;
 
@@ -63,8 +72,8 @@ function Module({ module }: { module: KnowledgeModule }) {
         onClick={() => setOpen((prev) => !prev)}
         className="flex w-full items-center gap-2 px-3 py-2.5 text-left"
       >
-        <span className="truncate text-sm font-medium">{t(module.titleKey)}</span>
-        <Badge>{t("knowledge.module", { n: module.index })}</Badge>
+        <span className="truncate text-sm font-medium">{knowledgeLabels[module.titleKey]}</span>
+        <Badge>{`Раздел ${module.index}`}</Badge>
         <span className="ml-auto text-xs text-subtle">
           {done} / {module.items.length}
         </span>
@@ -85,7 +94,6 @@ function Module({ module }: { module: KnowledgeModule }) {
 }
 
 export function KnowledgeList({ onClose }: { onClose?: (() => void) | undefined }) {
-  const { t } = useTranslation();
   const all = knowledgeModules.flatMap((module) => module.items);
   const done = all.filter((item) => item.status === "done").length;
   const percent = Math.round((done / all.length) * 100);
@@ -93,7 +101,7 @@ export function KnowledgeList({ onClose }: { onClose?: (() => void) | undefined 
   return (
     <section className="flex min-h-0 flex-col gap-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold">{t("knowledge.title")}</h2>
+        <h2 className="text-sm font-semibold">База знаний</h2>
         <div className="flex items-center gap-2">
           <span className="flex items-center gap-1.5 text-xs font-medium text-subtle">
             {percent}%
@@ -103,7 +111,7 @@ export function KnowledgeList({ onClose }: { onClose?: (() => void) | undefined 
             <IconButton
               variant="outline"
               className="size-8"
-              aria-label={t("assistant.close")}
+              aria-label="Закрыть"
               onClick={onClose}
             >
               <X size={16} />

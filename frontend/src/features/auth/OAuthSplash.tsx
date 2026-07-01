@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/cn";
 import { YandexLogo } from "./YandexLogo";
 
@@ -13,7 +12,6 @@ function stripStatusParam() {
 }
 
 export function OAuthSplash() {
-  const { t } = useTranslation();
   const [phase, setPhase] = useState<Phase>(() =>
     new URLSearchParams(window.location.search).get("status_code") === "200" ? "show" : "hidden",
   );
@@ -44,7 +42,7 @@ export function OAuthSplash() {
           <YandexLogo className="size-12 animate-auth-blink" />
         </span>
       </div>
-      <p className="animate-fade text-sm font-medium text-subtle">{t("auth.success")}</p>
+      <p className="animate-fade text-sm font-medium text-subtle">Вход выполнен</p>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { Tag } from "@/ui";
 import { assistantTopics } from "@/data/workspace";
 
@@ -10,13 +9,19 @@ const dotColors = [
   "bg-orange",
 ];
 
-export function TopicTags({ onSelect }: { onSelect: (text: string) => void }) {
-  const { t } = useTranslation();
+const topicLabels: Record<string, string> = {
+  "assistant.topics.stock": "Остатки",
+  "assistant.topics.acts": "Акты",
+  "assistant.topics.audits": "Инвентаризации",
+  "assistant.topics.schedule": "График",
+  "assistant.topics.reports": "Отчёты",
+};
 
+export function TopicTags({ onSelect }: { onSelect: (text: string) => void }) {
   return (
     <div className="flex flex-wrap justify-center gap-2">
       {assistantTopics.map((topic, index) => {
-        const label = t(topic.labelKey);
+        const label = topicLabels[topic.labelKey];
         return (
           <Tag
             key={topic.id}

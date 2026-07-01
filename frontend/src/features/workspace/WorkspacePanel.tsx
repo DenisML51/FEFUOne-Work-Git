@@ -1,6 +1,7 @@
 import { Card } from "@/ui";
 import { TopBar } from "./TopBar";
 import { Greeting } from "./Greeting";
+import { RoleSummary } from "./RoleSummary";
 
 export function WorkspacePanel({
   onOpenAssistant,
@@ -12,6 +13,7 @@ export function WorkspacePanel({
       <div className="space-y-4">
         <TopBar onOpenAssistant={onOpenAssistant} />
         <Greeting />
+        <RoleSummary />
       </div>
     </Card>
   );

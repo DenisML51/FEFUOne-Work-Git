@@ -26,3 +26,4 @@ airflow/logs/
 qdrant_storage/
 pg_data/
 /fefuone-main
+/fefuone-master

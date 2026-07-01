@@ -1,12 +1,22 @@
-import { useTranslation } from "react-i18next";
 import { Bell, ChevronRight, Home, Search, Sparkles } from "lucide-react";
 import { IconButton, Tooltip } from "@/ui";
 import { useNav } from "@/features/navigation/NavContext";
-import { LanguageSwitcher } from "@/features/layout/LanguageSwitcher";
 import { UploadsMenu } from "@/features/uploads/UploadsMenu";
+import { UserMenu } from "@/features/user/UserMenu";
+
+const navLabels: Record<string, string> = {
+  overview: "Обзор",
+  stock: "Реестр ТМЦ",
+  acts: "Акты",
+  audits: "Инвентаризации",
+  schedule: "График",
+  reports: "Отчёты",
+  preferences: "Настройки",
+  team: "Команда",
+  security: "Безопасность",
+};
 
 export function TopBar({ onOpenAssistant }: { onOpenAssistant: () => void }) {
-  const { t } = useTranslation();
   const { active, navigate } = useNav();
 
   return (
@@ -18,34 +28,35 @@ export function TopBar({ onOpenAssistant }: { onOpenAssistant: () => void }) {
           className="flex items-center gap-1.5 text-subtle hover:text-ink"
         >
           <Home size={14} />
-          {t("topbar.home")}
+          Главная
         </button>
         <ChevronRight size={14} className="text-faint" />
-        <span className="font-medium text-ink">{t(`nav.${active}`)}</span>
+        <span className="font-medium text-ink">{navLabels[active]}</span>
       </nav>
 
       <div className="flex items-center gap-0.5">
-        <LanguageSwitcher />
         <UploadsMenu />
-        <Tooltip label={t("nav.notifications")} placement="bottom">
-          <IconButton aria-label={t("nav.notifications")}>
+        <Tooltip label="Уведомления" placement="bottom">
+          <IconButton aria-label="Уведомления">
             <Bell size={16} />
           </IconButton>
         </Tooltip>
-        <Tooltip label={t("topbar.search")} placement="bottom">
-          <IconButton aria-label={t("topbar.search")}>
+        <Tooltip label="Поиск по ТМЦ и актам" placement="bottom">
+          <IconButton aria-label="Поиск по ТМЦ и актам">
             <Search size={16} />
           </IconButton>
         </Tooltip>
-        <Tooltip label={t("topbar.assistant")} placement="bottom">
+        <Tooltip label="Ассистент" placement="bottom">
           <IconButton
-            aria-label={t("topbar.assistant")}
+            aria-label="Ассистент"
             onClick={onOpenAssistant}
             className="xl:hidden"
           >
             <Sparkles size={16} />
           </IconButton>
         </Tooltip>
+        <div className="mx-1 h-6 w-px bg-line" />
+        <UserMenu />
       </div>
     </div>
   );

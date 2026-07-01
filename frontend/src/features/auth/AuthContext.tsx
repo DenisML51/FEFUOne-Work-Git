@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCurrentUser, logout as logoutRequest, setActiveRole } from "./api";
 import type { AuthUser } from "./types";
@@ -12,6 +12,10 @@ interface AuthContextValue {
   refresh: () => Promise<unknown>;
   setRole: (configId: number) => Promise<void>;
   logout: () => Promise<void>;
+  /** True while the farewell logout animation should be shown. */
+  isLoggingOut: boolean;
+  /** Called by the logout splash once its animation finishes. */
+  endLogout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -20,6 +24,7 @@ export const AUTH_QUERY_KEY = ["auth", "me"] as const;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const query = useQuery({
     queryKey: AUTH_QUERY_KEY,
@@ -44,10 +49,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await refresh();
     },
     logout: async () => {
+      setIsLoggingOut(true);
       await logoutRequest().catch(() => undefined);
       queryClient.setQueryData(AUTH_QUERY_KEY, null);
       await refresh();
     },
+    isLoggingOut,
+    endLogout: () => setIsLoggingOut(false),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

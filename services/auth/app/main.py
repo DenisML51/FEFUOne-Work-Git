@@ -1,9 +1,17 @@
+import logging
+import os
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
 from app.database import engine
 from app.sso.router import router as sso_router
+
+logging.basicConfig(
+    level=os.environ.get("LOG_LEVEL", "INFO").upper(),
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
 
 app = FastAPI(title="MOL Auth")
 

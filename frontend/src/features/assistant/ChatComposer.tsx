@@ -1,5 +1,4 @@
 import { useState, type KeyboardEvent } from "react";
-import { useTranslation } from "react-i18next";
 import { Mic, Paperclip, SendHorizontal, Smile } from "lucide-react";
 import { Button, IconButton } from "@/ui";
 
@@ -9,7 +8,6 @@ interface ChatComposerProps {
 }
 
 export function ChatComposer({ onSend, disabled }: ChatComposerProps) {
-  const { t } = useTranslation();
   const [value, setValue] = useState("");
 
   const submit = () => {
@@ -33,7 +31,7 @@ export function ChatComposer({ onSend, disabled }: ChatComposerProps) {
         onChange={(event) => setValue(event.target.value)}
         onKeyDown={onKeyDown}
         rows={1}
-        placeholder={t("assistant.placeholder")}
+        placeholder="Опишите задачу…"
         className="max-h-28 w-full resize-none bg-transparent px-2 py-1.5 text-sm outline-none placeholder:text-faint"
       />
       <div className="flex items-center justify-between">
@@ -53,7 +51,7 @@ export function ChatComposer({ onSend, disabled }: ChatComposerProps) {
           disabled={disabled || value.trim().length === 0}
           className="h-8 px-4 text-xs"
         >
-          {t("assistant.send")}
+          Отправить
           <SendHorizontal size={14} />
         </Button>
       </div>

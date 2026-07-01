@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { CheckCircle2 } from "lucide-react";
 import { Button, Card, ProgressBar } from "@/ui";
 import type { UploadFile } from "@/types";
@@ -10,7 +9,6 @@ export function UploadCard({
   file: UploadFile;
   onRemove: () => void;
 }) {
-  const { t } = useTranslation();
   const completed = file.status === "completed";
   const ext = file.name.split(".").pop()?.toUpperCase() ?? "FILE";
   const loaded = ((file.totalMb * file.progress) / 100).toFixed(1);
@@ -27,7 +25,7 @@ export function UploadCard({
             {completed ? (
               <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-success">
                 <CheckCircle2 size={14} />
-                {t("uploads.completed")}
+                Готово
               </span>
             ) : (
               <span className="shrink-0 text-xs font-medium text-subtle">
@@ -41,7 +39,7 @@ export function UploadCard({
             className="mt-2"
           />
           <p className="mt-1.5 text-xs text-subtle">
-            {t("uploads.size", { loaded, total: file.totalMb })}
+            {`${loaded} МБ из ${file.totalMb} МБ`}
           </p>
         </div>
       </div>
@@ -49,14 +47,14 @@ export function UploadCard({
       {completed && (
         <div className="mt-3 flex gap-2 pl-12">
           <Button variant="soft" className="h-7 px-3 text-xs">
-            {t("uploads.change")}
+            Заменить
           </Button>
           <button
             type="button"
             onClick={onRemove}
             className="rounded-full bg-tint-rose px-3 py-1.5 text-xs font-medium text-danger"
           >
-            {t("uploads.remove")}
+            Удалить
           </button>
         </div>
       )}

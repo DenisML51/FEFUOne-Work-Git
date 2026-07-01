@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,6 +17,7 @@ from app.users.schemas import UserResponse
 
 router = APIRouter(prefix="/sso", tags=["sso"])
 settings = get_settings()
+logger = logging.getLogger("app.sso")
 
 
 @router.post("/login", status_code=status.HTTP_200_OK)
@@ -64,10 +67,15 @@ async def logout() -> JSONResponse:
 async def login_yandex(return_url: str | None = None):
     sso = get_yandex_sso()
     if sso is None:
+        logger.error(
+            "Yandex login requested but SSO is not configured "
+            "(yandex_client_id/yandex_secret_id missing)"
+        )
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Вход через Яндекс не сконфигурирован",
         )
+    logger.info("Yandex login start, return_url=%s", return_url)
     async with sso:
         return await sso.get_login_redirect(params={"force_confirm": "true"}, state=return_url)
 
@@ -78,6 +86,7 @@ async def login_callback(
 ):
     sso = get_yandex_sso()
     if sso is None:
+        logger.error("Yandex callback hit but SSO is not configured")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Вход через Яндекс не сконфигурирован",
@@ -88,29 +97,53 @@ async def login_callback(
         async with sso:
             profile = await sso.verify_and_process(request=request)
     except Exception:
+        logger.exception("Yandex verify_and_process failed (token exchange / userinfo)")
         profile = None
 
     if not profile or not profile.email:
+        logger.warning(
+            "Yandex callback: no usable profile (profile=%s, email=%s) -> 401",
+            bool(profile),
+            getattr(profile, "email", None),
+        )
         return RedirectResponse(
             url=f"{sso.state or fallback}?status_code=401",
             status_code=status.HTTP_307_TEMPORARY_REDIRECT,
         )
 
+    logger.info("Yandex callback: authenticated email=%s", profile.email)
+
     try:
         user = await users_service.get_by_email(session, profile.email)
     except Exception:
+        logger.exception(
+            "Yandex callback: DB lookup failed for email=%s (database unreachable?) -> 503",
+            profile.email,
+        )
         return RedirectResponse(
             url=f"{sso.state or fallback}?status_code=503",
             status_code=status.HTTP_307_TEMPORARY_REDIRECT,
         )
 
     if not user or not user.is_active:
+        logger.warning(
+            "Yandex callback: user not allowed for email=%s (found=%s, is_active=%s) -> 403",
+            profile.email,
+            bool(user),
+            getattr(user, "is_active", None),
+        )
         return RedirectResponse(
             url=f"{sso.state or fallback}?status_code=403",
             status_code=status.HTTP_307_TEMPORARY_REDIRECT,
         )
 
     role_config_id = user.roles[0].id if user.roles else None
+    logger.info(
+        "Yandex callback: login ok for email=%s (user_id=%s, role_config_id=%s) -> 200",
+        profile.email,
+        user.id,
+        role_config_id,
+    )
     redirect = RedirectResponse(
         url=f"{sso.state or fallback}?status_code=200",
         status_code=status.HTTP_307_TEMPORARY_REDIRECT,

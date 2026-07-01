@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/cn";
 import { loginWithYandex } from "./api";
 import { YandexLogo } from "./YandexLogo";
 
 export function YandexLoginButton({ className }: { className?: string }) {
-  const { t } = useTranslation();
   const [leaving, setLeaving] = useState(false);
 
   function handleClick() {
@@ -21,7 +19,7 @@ export function YandexLoginButton({ className }: { className?: string }) {
         onClick={handleClick}
         disabled={leaving}
         aria-busy={leaving}
-        aria-label={t("auth.yandexButton")}
+        aria-label="Войти с Яндекс ID"
         className={cn(
           "relative inline-flex h-12 items-center justify-center gap-2.5 overflow-hidden whitespace-nowrap rounded-2xl bg-black px-5 text-sm font-medium text-white transition-[width,border-radius,padding] duration-300 ease-out hover:bg-black/90 disabled:cursor-default",
           leaving ? "w-12 rounded-full px-0" : "w-full",
@@ -36,7 +34,7 @@ export function YandexLoginButton({ className }: { className?: string }) {
         ) : (
           <>
             <YandexLogo className="size-5" />
-            <span>{t("auth.yandexButton")}</span>
+            <span>Войти с Яндекс ID</span>
           </>
         )}
       </button>

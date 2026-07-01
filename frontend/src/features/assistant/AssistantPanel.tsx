@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { SlidersHorizontal, Trash2, X } from "lucide-react";
 import { Card, IconButton, Tooltip } from "@/ui";
 import { cn } from "@/lib/cn";
@@ -14,7 +13,6 @@ export function AssistantPanel({
   className?: string;
   onClose?: (() => void) | undefined;
 }) {
-  const { t } = useTranslation();
   const { messages, send, isPending, reset } = useChat();
 
   return (
@@ -22,12 +20,12 @@ export function AssistantPanel({
       <Card className="flex min-h-0 flex-1 flex-col gap-4 p-4">
         <div className="flex h-14 items-center justify-between gap-2 rounded-2xl border border-line bg-surface px-3">
           <span className="text-sm font-medium text-subtle">
-            {t("assistant.header")}
+            ИИ-ассистент МОЛ
           </span>
           <div className="flex items-center gap-0.5">
-            <Tooltip label={t("assistant.clear")} placement="bottom">
+            <Tooltip label="Очистить чат" placement="bottom">
               <IconButton
-                aria-label={t("assistant.clear")}
+                aria-label="Очистить чат"
                 onClick={reset}
                 disabled={messages.length === 0}
                 className="disabled:pointer-events-none disabled:opacity-40"
@@ -35,15 +33,15 @@ export function AssistantPanel({
                 <Trash2 size={16} />
               </IconButton>
             </Tooltip>
-            <Tooltip label={t("assistant.filters")} placement="bottom">
-              <IconButton aria-label={t("assistant.filters")}>
+            <Tooltip label="Фильтры" placement="bottom">
+              <IconButton aria-label="Фильтры">
                 <SlidersHorizontal size={16} />
               </IconButton>
             </Tooltip>
             {onClose && (
-              <Tooltip label={t("assistant.close")} placement="bottom">
+              <Tooltip label="Закрыть" placement="bottom">
                 <IconButton
-                  aria-label={t("assistant.close")}
+                  aria-label="Закрыть"
                   onClick={onClose}
                   className="xl:hidden"
                 >
